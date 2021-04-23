@@ -176,7 +176,7 @@ parser.add_argument("-o", "--agent-outdir", dest='agentdir', type=str,
 parser.add_argument("-u", "--client-outdir", dest='clientdir', type=str,
                     help="Client output dir, by default using relative path 'src/modules/micrortps_bridge/micrortps_client'", default=default_client_out)
 parser.add_argument("-f", "--fastrtpsgen-dir", dest='fastrtpsgen', type=str, nargs='?',
-                    help="fastrtpsgen installation dir, only needed if fastrtpsgen is not in PATH, by default empty", default="")
+                    help="fastrtpsgen installation dir, only needed if fastrtpsgen is not in PATH, by default empty", default="/usr/local/bin")
 parser.add_argument("-g", "--fastrtpsgen-include", dest='fastrtpsgen_include', type=str,
                     help="directory(ies) to add to preprocessor include paths of fastrtpsgen, by default empty", default="")
 parser.add_argument("-r", "--ros2-distro", dest='ros2_distro', type=str, nargs='?',
@@ -244,6 +244,9 @@ if fastrtpsgen_include is not None and fastrtpsgen_include != '':
 # The starting version since this separation is 1.0.0, which follows its own
 # versioning
 fastrtpsgen_version = version.Version("1.0.0")
+print(fastrtpsgen_version)
+print("path: ")
+print(fastrtpsgen_path)
 if(os.path.exists(fastrtpsgen_path)):
     try:
         fastrtpsgen_version_out = subprocess.check_output(
