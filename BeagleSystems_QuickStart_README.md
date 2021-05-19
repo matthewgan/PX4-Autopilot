@@ -32,7 +32,7 @@ We will use this guide to train new developers joining our team, and keep tracki
 
 1. ```msg``` folder is short for ```uORB manager```, all the data structures(.msg) can be found in this folder. Customized data structures should also be added here if needed.
 
-1. ```NuttX``` is the OS of PX4, similar to uCos. Not recommended to change. OS version should match PX4 version.
+1. ```NuttX``` is the OS of PX4, similar to uCos. __Not recommended to change__. OS version should match PX4 version.
 
 1. ```ROMFS``` contains the start up procedure and configurations(init.d).
 	* rcS: First boot up script, mount SD, start uORB, config system level parameters.
