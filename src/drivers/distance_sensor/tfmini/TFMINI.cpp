@@ -236,6 +236,9 @@ TFMINI::collect()
 	// publish most recent valid measurement from buffer
 	_px4_rangefinder.update(timestamp_sample, distance_m);
 
+	// save the update value to last value for debugging
+	_last_distance_m = distance_m;
+
 	perf_end(_sample_perf);
 
 	return PX4_OK;
@@ -278,4 +281,5 @@ TFMINI::print_info()
 	printf("Using port '%s'\n", _port);
 	perf_print_counter(_sample_perf);
 	perf_print_counter(_comms_errors);
+	printf("Last reading '%.2f'\n", _last_distance_m);
 }

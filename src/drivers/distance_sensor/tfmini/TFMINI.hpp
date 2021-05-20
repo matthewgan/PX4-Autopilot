@@ -56,7 +56,10 @@
 
 #include "tfmini_parser.h"
 
-#define TFMINI_DEFAULT_PORT	"/dev/ttyS3"
+#define TFMINI_DEFAULT_PORT	"/dev/ttyS2"
+// ttyS2 - TELEM2
+// ttyS1 - TELEM1
+
 
 using namespace time_literals;
 
@@ -96,5 +99,8 @@ private:
 
 	perf_counter_t _comms_errors{perf_alloc(PC_COUNT, MODULE_NAME": com_err")};
 	perf_counter_t _sample_perf{perf_alloc(PC_ELAPSED, MODULE_NAME": read")};
+
+	// add for debugging
+	float _last_distance_m;
 
 };
