@@ -55,15 +55,31 @@ const char *parser_state[] = {
 	"2_SYNC_2",
 	"3_GOT_DIST_L",
 	"4_GOT_DIST_H",
-	"5_GOT_STRENGTH_L",
-	"6_GOT_STRENGTH_H",
-	"7_GOT_PRESERVED",
-	"8_GOT_QUALITY"
+	"5_GOT_AMP_L",
+	"6_GOT_AMP_H",
+	"7_GOT_TEMP_L",
+	"8_GOT_TEMP_H"
 	"9_GOT_CHECKSUM"
 };
 #endif
 
-int tfmini_parse(char c, char *parserbuf, unsigned *parserbuf_index, TFMINI_PARSE_STATE *state, float *dist)
+
+unsigned int tf_bytes_to_uint(char c_low, char c_high)
+{
+	unsigned int t1 = c_low;
+	unsigned int t2 = c_high;
+	t2 <<= 8;
+	t2 += t1;
+	return t2;
+}
+
+
+int tfmini_parse(char c, char *parserbuf,
+		unsigned *parserbuf_index,
+		TFMINI_PARSE_STATE *state,
+		float *dist,
+		int *signal_strength,
+		int *ctemp)
 {
 	int ret = -1;
 	//char *end;
@@ -118,34 +134,34 @@ int tfmini_parse(char c, char *parserbuf, unsigned *parserbuf_index, TFMINI_PARS
 		break;
 
 	case TFMINI_PARSE_STATE::STATE2_GOT_DIST_H:
-		*state = TFMINI_PARSE_STATE::STATE3_GOT_STRENGTH_L;
+		*state = TFMINI_PARSE_STATE::STATE3_GOT_AMP_L;
 		parserbuf[*parserbuf_index] = c;
 		(*parserbuf_index)++;
 
 		break;
 
-	case TFMINI_PARSE_STATE::STATE3_GOT_STRENGTH_L:
-		*state = TFMINI_PARSE_STATE::STATE3_GOT_STRENGTH_H;
+	case TFMINI_PARSE_STATE::STATE3_GOT_AMP_L:
+		*state = TFMINI_PARSE_STATE::STATE3_GOT_AMP_H;
 		parserbuf[*parserbuf_index] = c;
 		(*parserbuf_index)++;
 
 		break;
 
-	case TFMINI_PARSE_STATE::STATE3_GOT_STRENGTH_H:
-		*state = TFMINI_PARSE_STATE::STATE4_GOT_RESERVED;
+	case TFMINI_PARSE_STATE::STATE3_GOT_AMP_H:
+		*state = TFMINI_PARSE_STATE::STATE4_GOT_TEMP_L;
 		parserbuf[*parserbuf_index] = c;
 		(*parserbuf_index)++;
 
 		break;
 
-	case TFMINI_PARSE_STATE::STATE4_GOT_RESERVED:
-		*state = TFMINI_PARSE_STATE::STATE5_GOT_QUALITY;
+	case TFMINI_PARSE_STATE::STATE4_GOT_TEMP_L:
+		*state = TFMINI_PARSE_STATE::STATE5_GOT_TEMP_H;
 		parserbuf[*parserbuf_index] = c;
 		(*parserbuf_index)++;
 
 		break;
 
-	case TFMINI_PARSE_STATE::STATE5_GOT_QUALITY:
+	case TFMINI_PARSE_STATE::STATE5_GOT_TEMP_H:
 		// Find the checksum
 		unsigned char cksm = 0;
 
@@ -155,11 +171,12 @@ int tfmini_parse(char c, char *parserbuf, unsigned *parserbuf_index, TFMINI_PARS
 
 		if (c == cksm) {
 			parserbuf[*parserbuf_index] = '\0';
-			unsigned int t1 = parserbuf[2];
-			unsigned int t2 = parserbuf[3];
-			t2 <<= 8;
-			t2 += t1;
-			*dist = ((float)t2) / 100;
+			unsigned int distance = tf_bytes_to_uint(parserbuf[2],parserbuf[3]);
+			*dist = ((float)distance) / 100;
+			unsigned int amp = tf_bytes_to_uint(parserbuf[4],parserbuf[5]);
+			*signal_strength = (int)amp;
+			unsigned int temperature = tf_bytes_to_uint(parserbuf[6],parserbuf[7]);
+			*ctemp = (int)temperature / 8 - 256;
 			*state = TFMINI_PARSE_STATE::STATE6_GOT_CHECKSUM;
 			*parserbuf_index = 0;
 			ret = 0;
