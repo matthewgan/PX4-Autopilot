@@ -293,7 +293,7 @@ TFMINI::print_info()
 	printf("Using port '%s'\n", _port);
 	perf_print_counter(_sample_perf);
 	perf_print_counter(_comms_errors);
-	printf("Last reading distance'%.2f'\n", (double)_last_distance_m);
-	printf("Last reading strength'%d'\n", _signal_strength);
-	printf("Last reading temperature'%d'\n", (double)_celsius_temperature);
+	printf("Last reading distance '%.2f'\n", (double)_last_distance_m);
+	printf("Last reading strength '%d'\n", _signal_strength);
+	printf("Last reading temperature '%d' degrees celsius\n", _celsius_temperature);
 }

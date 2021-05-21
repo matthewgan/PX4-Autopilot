@@ -176,7 +176,7 @@ int tfmini_parse(char c, char *parserbuf,
 			unsigned int amp = tf_bytes_to_uint(parserbuf[4],parserbuf[5]);
 			*signal_strength = (int)amp;
 			unsigned int temperature = tf_bytes_to_uint(parserbuf[6],parserbuf[7]);
-			*ctemp = (int)(temperature>>3) - 256;
+			*ctemp = (int)temperature / 8 - 256;
 			*state = TFMINI_PARSE_STATE::STATE6_GOT_CHECKSUM;
 			*parserbuf_index = 0;
 			ret = 0;
