@@ -35,6 +35,7 @@
 
 #include <lib/drivers/device/Device.hpp>
 #include <fcntl.h>
+// #include <termios.h>
 
 TFMINI::TFMINI(const char *port, uint8_t rotation) :
 	ScheduledWorkItem(MODULE_NAME, px4::serial_port_to_wq(port)),
@@ -72,7 +73,8 @@ TFMINI::~TFMINI()
 int
 TFMINI::init()
 {
-	int32_t hw_model = 1; // only one model so far...
+	int32_t hw_model = 1; // more models
+	param_get(param_find("SENS_EN_TFLIDAR"), &hw_model);
 
 	switch (hw_model) {
 	case 1: // TFMINI (12m, 100 Hz)
@@ -86,7 +88,13 @@ TFMINI::init()
 		_px4_rangefinder.set_fov(math::radians(1.15f));
 
 		break;
+	case 2:	// TFLUNA (8m, 100Hz)
+		// 0.2 - 8m from the spec
+		_px4_rangefinder.set_min_distance(0.3f);
+		_px4_rangefinder.set_max_distance(8.0f);
+		_px4_rangefinder.set_fov(math::radians(2.0f));
 
+		break;
 	default:
 		PX4_ERR("invalid HW model %d.", hw_model);
 		return -1;
@@ -182,6 +190,8 @@ TFMINI::collect()
 
 	int ret = 0;
 	float distance_m = -1.0f;
+	int signal_strength = 0;
+	int celsius_temperature = 0;
 
 	// Check the number of bytes available in the buffer
 	int bytes_available = 0;
@@ -219,7 +229,7 @@ TFMINI::collect()
 
 		// parse buffer
 		for (int i = 0; i < ret; i++) {
-			tfmini_parse(readbuf[i], _linebuf, &_linebuf_index, &_parse_state, &distance_m);
+			tfmini_parse(readbuf[i], _linebuf, &_linebuf_index, &_parse_state, &distance_m, &signal_strength, &celsius_temperature);
 		}
 
 		// bytes left to parse
@@ -238,6 +248,8 @@ TFMINI::collect()
 
 	// save the update value to last value for debugging
 	_last_distance_m = distance_m;
+	_signal_strength = signal_strength;
+	_celsius_temperature = celsius_temperature;
 
 	perf_end(_sample_perf);
 
@@ -248,7 +260,7 @@ void
 TFMINI::start()
 {
 	// schedule a cycle to start things (the sensor sends at 100Hz, but we run a bit faster to avoid missing data)
-	ScheduleOnInterval(7_ms);
+	ScheduleOnInterval(9_ms);
 }
 
 void
@@ -281,5 +293,7 @@ TFMINI::print_info()
 	printf("Using port '%s'\n", _port);
 	perf_print_counter(_sample_perf);
 	perf_print_counter(_comms_errors);
-	printf("Last reading '%.2f'\n", _last_distance_m);
+	printf("Last reading distance'%.2f'\n", (double)_last_distance_m);
+	printf("Last reading strength'%d'\n", _signal_strength);
+	printf("Last reading temperature'%d'\n", (double)_celsius_temperature);
 }

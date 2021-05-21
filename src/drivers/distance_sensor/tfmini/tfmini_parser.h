@@ -36,6 +36,7 @@
  * @author Lorenz Meier <lm@inf.ethz.ch>
  * @author Chuong Nguyen <chnguye7@asu.edu>
  * @author Ayush Gaud <ayush.gaud@gmail.com>
+ * @author Matthew Gan <matthewgan@126.com>
  *
  * Declarations of parser for the Benewake TFmini laser rangefinder series
  */
@@ -54,6 +55,15 @@
 // 7) Reserved bytes
 // 8) Original signal quality degree
 // 9) Checksum parity bit (low 8bit), Checksum = Byte1 + Byte2 +...+Byte8. This is only a low 8bit though
+// Update data fromat for Benewake TF series Lidar
+// Interface are unified for TFmini, TFmini S, TFmini Plus, TF luna
+// 9-BYTE/cm default output format
+// 5) Strength_L (low 8bit)		-> Amp_L (low 8bit)
+// 6) Strength_H (high 8bit)		-> Amp_H (High 8bit)
+// 7) Reserved bytes 			-> Temp_L (low 8bit)
+// 8) Original signal quality degree 	-> Temp_H (High 8bit)
+// Amp: Signal strength indicator. Dist value is unreliable when Amp < 100 or Amp = 65535 (Overexposure)
+// Temp: Celsius temperature = Temp / 8 - 256℃
 
 
 enum class TFMINI_PARSE_STATE {
@@ -62,11 +72,11 @@ enum class TFMINI_PARSE_STATE {
 	STATE1_SYNC_2,
 	STATE2_GOT_DIST_L,
 	STATE2_GOT_DIST_H,
-	STATE3_GOT_STRENGTH_L,
-	STATE3_GOT_STRENGTH_H,
-	STATE4_GOT_RESERVED,
-	STATE5_GOT_QUALITY,
+	STATE3_GOT_AMP_L,
+	STATE3_GOT_AMP_H,
+	STATE4_GOT_TEMP_L,
+	STATE5_GOT_TEMP_H,
 	STATE6_GOT_CHECKSUM
 };
 
-int tfmini_parse(char c, char *parserbuf, unsigned *parserbuf_index, TFMINI_PARSE_STATE *state, float *dist);
+int tfmini_parse(char c, char *parserbuf, unsigned *parserbuf_index, TFMINI_PARSE_STATE *state, float *dist, int *amp, int *temp);

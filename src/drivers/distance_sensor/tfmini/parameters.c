@@ -32,77 +32,11 @@
  ****************************************************************************/
 
 /**
- * @file tfmini.cpp
- * @author Lorenz Meier <lm@inf.ethz.ch>
- * @author Greg Hulands
- * @author Ayush Gaud <ayush.gaud@gmail.com>
- * @author Christoph Tobler <christoph@px4.io>
- * @author Mohammed Kabir <mhkabir@mit.edu>
- * @author Matthew Gan <matthewgan@126.com>
+ * Benewake Lidar Rangefinder hardware model (serial)
  *
- * Driver for the Benewake TFmini laser rangefinder series
+ * @reboot_required true
+ * @group Sensors
+ * @value 1 TFMINI Serial
+ * @value 2 TFLUNA Serial
  */
-
-#pragma once
-
-#include <termios.h>
-
-#include <drivers/drv_hrt.h>
-#include <lib/perf/perf_counter.h>
-#include <px4_platform_common/px4_config.h>
-#include <px4_platform_common/module.h>
-#include <px4_platform_common/px4_work_queue/ScheduledWorkItem.hpp>
-#include <lib/drivers/rangefinder/PX4Rangefinder.hpp>
-#include <lib/parameters/param.h>
-#include <uORB/topics/distance_sensor.h>
-
-#include "tfmini_parser.h"
-
-#define TFMINI_DEFAULT_PORT	"/dev/ttyS1"
-// check board default.cmake for serial mapping
-
-
-using namespace time_literals;
-
-class TFMINI : public px4::ScheduledWorkItem
-{
-public:
-	TFMINI(const char *port, uint8_t rotation = distance_sensor_s::ROTATION_DOWNWARD_FACING);
-	virtual ~TFMINI();
-
-	int init();
-
-	void Run() override;
-
-	void print_info();
-
-private:
-
-	int collect();
-
-	void start();
-	void stop();
-
-	PX4Rangefinder	_px4_rangefinder;
-
-	TFMINI_PARSE_STATE _parse_state {TFMINI_PARSE_STATE::STATE0_UNSYNC};
-
-	char _linebuf[10] {};
-	char _port[20] {};
-
-	static constexpr int kCONVERSIONINTERVAL{9_ms};
-
-	int _fd{-1};
-
-	unsigned int _linebuf_index{0};
-
-	hrt_abstime _last_read{0};
-
-	perf_counter_t _comms_errors{perf_alloc(PC_COUNT, MODULE_NAME": com_err")};
-	perf_counter_t _sample_perf{perf_alloc(PC_ELAPSED, MODULE_NAME": read")};
-
-	// add for print info
-	float _last_distance_m;
-	int _signal_strength;
-	int _celsius_temperature;
-};
+PARAM_DEFINE_INT32(SENS_EN_TFLIDAR, 1);
