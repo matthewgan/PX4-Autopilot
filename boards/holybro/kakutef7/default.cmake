@@ -1,9 +1,8 @@
 
+add_definitions(-DCONSTRAINED_FLASH_NO_HELP="https://docs.px4.io/master/en/modules/modules_main.html")
+
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR holybro
-	MODEL kakutef7
-	LABEL default
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m7
 	EXTERNAL_METADATA
@@ -46,8 +45,10 @@ px4_add_board(
 		load_mon
 		#local_position_estimator
 		logger
+		#mag_bias_estimator
 		mavlink
 		mc_att_control
+		# mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control

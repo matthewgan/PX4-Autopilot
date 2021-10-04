@@ -1,9 +1,6 @@
 
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR px4
-	MODEL fmu-v6x
-	LABEL default
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m7
 	ROMFSROOT px4fmu_common
@@ -44,20 +41,23 @@ px4_add_board(
 		pca9685
 		pca9685_pwm_out
 		power_monitor/ina226
+		power_monitor/ina228
+		power_monitor/ina238
 		#protocol_splitter
 		pwm_out_sim
 		pwm_out
 		px4io
 		rc_input
-		roboclaw
+		#roboclaw
 		rpm
 		safety_button
+		#smart_battery/batmon
 		telemetry # all available telemetry drivers
 		tone_alarm
 		uavcan
 	MODULES
 		airspeed_selector
-		attitude_estimator_q
+		#attitude_estimator_q
 		camera_feedback
 		commander
 		dataman
@@ -72,10 +72,12 @@ px4_add_board(
 		land_detector
 		landing_target_estimator
 		load_mon
-		local_position_estimator
+		#local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control
@@ -93,15 +95,15 @@ px4_add_board(
 	SYSTEMCMDS
 		bl_update
 		dmesg
-		dumpfile
-		esc_calib
-		gpio
+		#dumpfile
+		#esc_calib
+		#gpio
 		hardfault_log
 		i2cdetect
 		led_control
 		mft
 		mixer
-		motor_ramp
+		#motor_ramp
 		motor_test
 		mtd
 		nshterm
@@ -110,20 +112,20 @@ px4_add_board(
 		perf
 		pwm
 		reboot
-		reflect
+		#reflect
 		sd_bench
-		serial_test
+		#serial_test
 		system_time
-#		top
+		top
 		topic_listener
 		tune_control
 		uorb
-		usb_connected
+		#usb_connected
 		ver
 		work_queue
 	EXAMPLES
 		fake_gps
-		#fake_gyro
+		#fake_imu
 		#fake_magnetometer
 		#fixedwing_control # Tutorial code from https://px4.io/dev/example_fixedwing_control
 		#hello

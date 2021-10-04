@@ -1,9 +1,6 @@
 
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR modalai
-	MODEL fc-v1
-	LABEL default
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m7
 	ROMFSROOT px4fmu_common
@@ -13,6 +10,7 @@ px4_add_board(
 		TEL1:/dev/ttyS6 # UART7  / J5
 		TEL2:/dev/ttyS4 # UART5  / J1
 		TEL3:/dev/ttyS1 # USART2 / J4
+		TEL4:/dev/ttyS3 # UART4  / J09
 	DRIVERS
 		adc/ads1115
 		adc/board_adc
@@ -44,6 +42,7 @@ px4_add_board(
 		rc_input
 		roboclaw
 		rpm
+		smart_battery/batmon
 		safety_button
 		telemetry # all available telemetry drivers
 		#tone_alarm
@@ -67,8 +66,10 @@ px4_add_board(
 		load_mon
 		local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control
@@ -115,7 +116,7 @@ px4_add_board(
 		work_queue
 	EXAMPLES
 		fake_gps
-		#fake_gyro
+		#fake_imu
 		#fake_magnetometer
 		#fixedwing_control # Tutorial code from https://px4.io/dev/example_fixedwing_control
 		#hello

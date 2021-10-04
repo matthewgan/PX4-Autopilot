@@ -3,9 +3,6 @@ add_definitions(
 )
 
 px4_add_board(
-	VENDOR scumaker
-	MODEL pilotpi
-	LABEL default
 	PLATFORM posix
 	ARCHITECTURE cortex-a53
 	ROMFSROOT px4fmu_common
@@ -16,7 +13,6 @@ px4_add_board(
 		#barometer # all available barometer drivers
 		barometer/ms5611
 		batt_smbus
-		camera_capture
 		camera_trigger
 		differential_pressure # all available differential pressure drivers
 		distance_sensor # all available distance sensor drivers
@@ -31,6 +27,7 @@ px4_add_board(
 		pca9685_pwm_out
 		pwm_out_sim
 		rc_input
+		smart_battery/batmon
 		#telemetry # all available telemetry drivers
 	MODULES
 		airspeed_selector
@@ -51,8 +48,10 @@ px4_add_board(
 		load_mon
 		local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control

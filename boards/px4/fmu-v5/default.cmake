@@ -1,14 +1,12 @@
 
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR px4
-	MODEL fmu-v5
-	LABEL default
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m7
 	ROMFSROOT px4fmu_common
 	IO px4_io-v2_default
 	UAVCAN_INTERFACES 2
+	UAVCAN_TIMER_OVERRIDE 6
 	SERIAL_PORTS
 		GPS1:/dev/ttyS0
 		TEL1:/dev/ttyS1
@@ -48,6 +46,7 @@ px4_add_board(
 		px4io
 		rc_input
 		roboclaw
+		smart_battery/batmon
 		rpm
 		safety_button
 		telemetry # all available telemetry drivers
@@ -73,8 +72,10 @@ px4_add_board(
 		load_mon
 		local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control
@@ -121,7 +122,7 @@ px4_add_board(
 		work_queue
 	EXAMPLES
 		fake_gps
-		#fake_gyro
+		#fake_imu
 		#fake_magnetometer
 		#fixedwing_control # Tutorial code from https://px4.io/dev/example_fixedwing_control
 		#hello

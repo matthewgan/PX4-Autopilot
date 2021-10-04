@@ -47,16 +47,16 @@ bool FlightTaskManualAcceleration::activate(const vehicle_local_position_setpoin
 {
 	bool ret = FlightTaskManualAltitudeSmoothVel::activate(last_setpoint);
 
-	if (PX4_ISFINITE(last_setpoint.vx)) {
+	_stick_acceleration_xy.resetPosition();
+
+	if (PX4_ISFINITE(last_setpoint.vx) && PX4_ISFINITE(last_setpoint.vy)) {
 		_stick_acceleration_xy.resetVelocity(Vector2f(last_setpoint.vx, last_setpoint.vy));
 
 	} else {
 		_stick_acceleration_xy.resetVelocity(_velocity.xy());
 	}
 
-	_stick_acceleration_xy.resetPosition();
-
-	if (PX4_ISFINITE(last_setpoint.acceleration[0])) {
+	if (PX4_ISFINITE(last_setpoint.acceleration[0]) && PX4_ISFINITE(last_setpoint.acceleration[1])) {
 		_stick_acceleration_xy.resetAcceleration(Vector2f(last_setpoint.acceleration[0], last_setpoint.acceleration[1]));
 	}
 
@@ -74,15 +74,27 @@ bool FlightTaskManualAcceleration::update()
 	_stick_acceleration_xy.getSetpoints(_position_setpoint, _velocity_setpoint, _acceleration_setpoint);
 
 	_constraints.want_takeoff = _checkTakeoff();
+
+	// check if an external yaw handler is active and if yes, let it update the yaw setpoints
+	if (_weathervane_yaw_handler && _weathervane_yaw_handler->is_active()) {
+		_yaw_setpoint = NAN;
+
+		// only enable the weathervane to change the yawrate when position lock is active (and thus the pos. sp. are NAN)
+		if (PX4_ISFINITE(_position_setpoint(0)) && PX4_ISFINITE(_position_setpoint(1))) {
+			// vehicle is steady
+			_yawspeed_setpoint += _weathervane_yaw_handler->get_weathervane_yawrate();
+		}
+	}
+
 	return ret;
 }
 
-void FlightTaskManualAcceleration::_ekfResetHandlerPositionXY()
+void FlightTaskManualAcceleration::_ekfResetHandlerPositionXY(const matrix::Vector2f &delta_xy)
 {
 	_stick_acceleration_xy.resetPosition();
 }
 
-void FlightTaskManualAcceleration::_ekfResetHandlerVelocityXY()
+void FlightTaskManualAcceleration::_ekfResetHandlerVelocityXY(const matrix::Vector2f &delta_vxy)
 {
 	_stick_acceleration_xy.resetVelocity(_velocity.xy());
 }

@@ -1,14 +1,10 @@
 
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR nxp
-	MODEL fmuk66-e
-	LABEL socketcan
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m4
 	CONSTRAINED_MEMORY
 	ROMFSROOT px4fmu_common
-	UAVCAN_INTERFACES 2
 	SERIAL_PORTS
 		GPS1:/dev/ttyS3
 		TEL1:/dev/ttyS4
@@ -45,9 +41,10 @@ px4_add_board(
 		roboclaw
 		rpm
 		safety_button
+		smart_battery/batmon
 		telemetry # all available telemetry drivers
 		tone_alarm
-		#uavcannode_v1
+		uavcan_v1
 	MODULES
 		airspeed_selector
 		attitude_estimator_q
@@ -68,8 +65,10 @@ px4_add_board(
 		load_mon
 		local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control
@@ -116,7 +115,7 @@ px4_add_board(
 		work_queue
 	EXAMPLES
 		fake_gps
-		#fake_gyro
+		#fake_imu
 		#fake_magnetometer
 		#fixedwing_control # Tutorial code from https://px4.io/dev/example_fixedwing_control
 		#hello

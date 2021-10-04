@@ -3,8 +3,6 @@ add_compile_options(-Wno-narrowing)
 
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR bitcraze
-	MODEL crazyflie
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m4
 	CONSTRAINED_MEMORY
@@ -32,8 +30,10 @@ px4_add_board(
 		load_mon
 		#local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		# mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control

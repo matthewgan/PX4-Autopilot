@@ -1,9 +1,6 @@
 
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR nxp
-	MODEL fmurt1062-v1
-	LABEL default
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m7
 	ROMFSROOT px4fmu_common
@@ -17,7 +14,8 @@ px4_add_board(
 	DRIVERS
 		#adc/ads1115
 		adc/board_adc
-		barometer # all available barometer drivers
+		#barometer # all available barometer drivers
+		barometer/ms5611
 		batt_smbus
 		camera_capture
 		camera_trigger
@@ -46,12 +44,13 @@ px4_add_board(
 		#roboclaw
 		#rpm
 		safety_button
-		telemetry # all available telemetry drivers
+		#smart_battery/batmon
+		#telemetry # all available telemetry drivers
 		tone_alarm
 		#uavcan
 	MODULES
 		#airspeed_selector
-		attitude_estimator_q
+		#attitude_estimator_q
 		battery_status
 		camera_feedback
 		commander
@@ -67,10 +66,12 @@ px4_add_board(
 		land_detector
 		landing_target_estimator
 		load_mon
-		local_position_estimator
+		#local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control
@@ -96,7 +97,7 @@ px4_add_board(
 		led_control
 		mft
 		mixer
-		motor_ramp
+		#motor_ramp
 		motor_test
 		mtd
 		nshterm
@@ -104,10 +105,10 @@ px4_add_board(
 		perf
 		pwm
 		reboot
-		reflect
+		#reflect
 		sd_bench
 		#serial_test
-		system_time
+		#system_time
 		top
 		topic_listener
 		tune_control
@@ -117,7 +118,7 @@ px4_add_board(
 		work_queue
 	EXAMPLES
 		#fake_gps
-		#fake_gyro
+		#fake_imu
 		#fake_magnetometer
 		#fixedwing_control # Tutorial code from https://px4.io/dev/example_fixedwing_control
 		#hello

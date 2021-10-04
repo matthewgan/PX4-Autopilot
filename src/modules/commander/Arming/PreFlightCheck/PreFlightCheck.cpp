@@ -184,10 +184,10 @@ bool PreFlightCheck::preflightCheck(orb_advert_t *mavlink_log_pub, vehicle_statu
 		int32_t max_airspeed_check_en = 0;
 		param_get(param_find("COM_ARM_ARSP_EN"), &max_airspeed_check_en);
 
-		float airspeed_stall = 10.0f;
-		param_get(param_find("ASPD_STALL"), &airspeed_stall);
+		float airspeed_trim = 10.0f;
+		param_get(param_find("FW_AIRSPD_TRIM"), &airspeed_trim);
 
-		const float arming_max_airspeed_allowed = airspeed_stall / 2.0f; // set to half of stall speed
+		const float arming_max_airspeed_allowed = airspeed_trim / 2.0f; // set to half of trim airspeed
 
 		if (!airspeedCheck(mavlink_log_pub, status, optional, report_failures, prearm, (bool)max_airspeed_check_en,
 				   arming_max_airspeed_allowed)
@@ -237,14 +237,16 @@ bool PreFlightCheck::preflightCheck(orb_advert_t *mavlink_log_pub, vehicle_statu
 
 	if (estimator_type == 2) {
 
-		const bool ekf_healthy = ekf2Check(mavlink_log_pub, status, false, report_failures) &&
-					 ekf2CheckSensorBias(mavlink_log_pub, report_failures);
+		const bool in_grace_period = time_since_boot < 10_s;
+		const bool do_report_ekf2_failures = report_failures && (!in_grace_period || prearm);
+		const bool ekf_healthy = ekf2Check(mavlink_log_pub, status, false, do_report_ekf2_failures) &&
+					 ekf2CheckSensorBias(mavlink_log_pub, do_report_ekf2_failures);
 
 		// For the first 10 seconds the ekf2 can be unhealthy, and we just mark it
 		// as not present.
-		// After that or if report_failures is true, we'll set the flags as is.
+		// After that or if we're forced to report, we'll set the flags as is.
 
-		if (!ekf_healthy && time_since_boot < 10_s && !report_failures) {
+		if (!ekf_healthy && !do_report_ekf2_failures) {
 			set_health_flags(subsystem_info_s::SUBSYSTEM_TYPE_AHRS, true, false, false, status);
 
 		} else {

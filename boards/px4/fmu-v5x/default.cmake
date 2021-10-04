@@ -1,9 +1,6 @@
 
 px4_add_board(
 	PLATFORM nuttx
-	VENDOR px4
-	MODEL fmu-v5x
-	LABEL default
 	TOOLCHAIN arm-none-eabi
 	ARCHITECTURE cortex-m7
 	ROMFSROOT px4fmu_common
@@ -33,6 +30,7 @@ px4_add_board(
 		imu/bosch/bmi088
 		imu/invensense/icm20602
 		imu/invensense/icm20948 # required for ak09916 mag
+		imu/invensense/icm20649
 		imu/invensense/icm42688p
 		irlock
 		lights # all available light drivers
@@ -42,6 +40,8 @@ px4_add_board(
 		pca9685
 		pca9685_pwm_out
 		power_monitor/ina226
+		power_monitor/ina228
+		power_monitor/ina238
 		#protocol_splitter
 		pwm_input
 		pwm_out_sim
@@ -51,6 +51,7 @@ px4_add_board(
 		roboclaw
 		rpm
 		safety_button
+		smart_battery/batmon
 		telemetry # all available telemetry drivers
 		tone_alarm
 		uavcan
@@ -73,8 +74,10 @@ px4_add_board(
 		load_mon
 		local_position_estimator
 		logger
+		mag_bias_estimator
 		mavlink
 		mc_att_control
+		mc_autotune_attitude_control
 		mc_hover_thrust_estimator
 		mc_pos_control
 		mc_rate_control
@@ -122,7 +125,7 @@ px4_add_board(
 		work_queue
 	EXAMPLES
 		fake_gps
-		#fake_gyro
+		#fake_imu
 		#fake_magnetometer
 		#fixedwing_control # Tutorial code from https://px4.io/dev/example_fixedwing_control
 		#hello
